@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.20;
-import "./Ayan-TokenFaucet/Token.sol";
+import "TokenFaucet/Token.sol";
 
 /// @title Faucet - A one-time token dispenser
 contract Faucet {
