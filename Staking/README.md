@@ -22,7 +22,7 @@ To deploy and test the contract, you need:
 - View staked balance, reward amount, and remaining lock time
 - Contract can receive to fund rewards via the `receive()` fallback
 
-### 🚀 How It Works
+### How It Works
 
 #### 1. Stake Tokens
 
