@@ -1,6 +1,6 @@
 #  SimpleLottery Smart Contract
 
-The `SimpleLottery` contract is a decentralized lottery system built on Ethereum. Participants can enter the lottery by paying a fixed ticket price in ETH. Once enough players have entered, the manager can draw a winner and distribute the entire pot.
+The `SimpleLottery` contract is a decentralized lottery system. Participants can enter the lottery by paying a fixed ticket price. Once enough players have entered, the manager can draw a winner and distribute the entire pot.
 
 ---
 
@@ -24,11 +24,9 @@ The `SimpleLottery` contract is a decentralized lottery system built on Ethereum
 ---
 
 ###  `enterLottery() public payable`
-- Allows users to join the lottery by sending the exact `ticketPrice` in ETH.
+- Allows users to join the lottery by sending the exact `ticketPrice`.
 - Appends the sender to the `participants` array.
 - Reverts if the lottery is not active or the sent amount is incorrect.
-
->  Also callable via direct ETH transfer thanks to the `receive()` function.
 
 ---
 
@@ -56,7 +54,7 @@ The `SimpleLottery` contract is a decentralized lottery system built on Ethereum
 ---
 
 ###  `getContractBalance() public view returns (uint)`
-- Returns the total ETH currently held in the contract.
+- Returns the total balance currently held in the contract.
 
 ---
 
