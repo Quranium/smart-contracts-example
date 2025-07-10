@@ -58,7 +58,7 @@ The `SimpleLottery` contract is a decentralized lottery system. Participants can
 
 ---
 
-## 🛠 Prerequisites
+## Prerequisites
 
 To deploy and test the contracts, you need:
 
