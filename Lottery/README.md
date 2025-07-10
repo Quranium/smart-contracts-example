@@ -45,3 +45,14 @@ To deploy and test the contracts, you need:
 2. Select "Quranium" as environment
 3. Ensure QSafe is connected to Quranium Testnet
 4. Deploy `SimpleWallet` contract with ticketPrice in Wei.
+
+
+### License
+
+This project is licensed under the MIT License. See the `SPDX-License-Identifier: MIT` in the contract files. 
+
+### Support
+
+For issues or feature requests:
+
+- Check the QRemix IDE documentation: [https://docs.qremix.org](https://docs.qremix.org/)
