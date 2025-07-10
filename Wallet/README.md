@@ -1,10 +1,10 @@
-# 💼 SimpleWallet Smart Contract
+# SimpleWallet Smart Contract
 
 A minimalistic wallet smart contract that allows deposits, message logging with transfers, balance checking, and owner-only withdrawal functionality.
 
 ---
 
-## 🧠 Overview
+## Overview
 
 The `SimpleWallet` is a basic contract for handling transactions with the following features:
 
@@ -14,6 +14,15 @@ The `SimpleWallet` is a basic contract for handling transactions with the follow
 - Only the contract owner can withdraw all the funds.
 
 ---
+
+## Prerequisites
+
+To deploy and test the contracts, you need:
+
+- **MetaMask or QSafe**: Browser extension for testnet deployments (optional).
+- **Test ETH or QRN**: Required for testnet deployments (e.g., from a Sepolia faucet like [sepoliafaucet.com](https://sepoliafaucet.com/), Quranium [faucet.quranium.org](https://faucet.quranium.org/) ).
+    - **QRemix IDE**: Access at [qremix.org.](https://www.qremix.org/)
+- **Basic Solidity Knowledge**: Understanding of ERC20 tokens, smart contract deployment, and Remix IDE.
 
 ## Deployment and Testing in QRemix IDE
 
@@ -33,6 +42,6 @@ The `SimpleWallet` is a basic contract for handling transactions with the follow
 #### For Quranium Testnet:
 
 1. Go to "Deploy & Run Transactions" tab
-2. Select "Injected Provider - MetaMask" as environment
-3. Ensure MetaMask/QSafe is connected to Quranium Testnet
+2. Select "Quranium" as environment
+3. Ensure QSafe is connected to Quranium Testnet
 4. Deploy `SimpleWallet` contract.
