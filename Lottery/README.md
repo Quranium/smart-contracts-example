@@ -48,7 +48,7 @@ The `SimpleLottery` contract is a decentralized lottery system. Participants can
 
 ---
 
-### 📊 `getParticipantsCount() public view returns (uint)`
+### `getParticipantsCount() public view returns (uint)`
 - Returns the number of participants in the current round.
 
 ---
@@ -69,7 +69,7 @@ To deploy and test the contracts, you need:
 
 ---
 
-## 🧪 Deployment and Testing in QRemix IDE
+## Deployment and Testing in QRemix IDE
 
 ### Step 1: Setup
 
