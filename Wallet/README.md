@@ -22,7 +22,7 @@ To deploy and test the contracts, you need:
 - **MetaMask or QSafe**: Browser extension for testnet deployments (optional).
 - **Test ETH or QRN**: Required for testnet deployments (e.g., from a Sepolia faucet like [sepoliafaucet.com](https://sepoliafaucet.com/), Quranium [faucet.quranium.org](https://faucet.quranium.org/) ).
     - **QRemix IDE**: Access at [qremix.org.](https://www.qremix.org/)
-- **Basic Solidity Knowledge**: Understanding of ERC20 tokens, smart contract deployment, and Remix IDE.
+- **Basic Solidity Knowledge**: Smart contract deployment, and Remix IDE.
 
 ## Deployment and Testing in QRemix IDE
 
@@ -45,3 +45,15 @@ To deploy and test the contracts, you need:
 2. Select "Quranium" as environment
 3. Ensure QSafe is connected to Quranium Testnet
 4. Deploy `SimpleWallet` contract.
+
+
+
+### License
+
+This project is licensed under the MIT License. See the `SPDX-License-Identifier: MIT` in the contract files. 
+
+### Support
+
+For issues or feature requests:
+
+- Check the QRemix IDE documentation: [https://docs.qremix.org](https://docs.qremix.org/)
