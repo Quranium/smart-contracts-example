@@ -1,5 +1,3 @@
-Great! Based on your example, here's a professional `README.md` for your **MessageBoard** smart contract in the same format and tone:
-
 ---
 
 # MessageBoard
