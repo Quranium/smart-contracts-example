@@ -23,7 +23,7 @@ To contribute:
 1. **Fork** the repository
 2. **Create a new branch** for your changes
 3. **Create a PR to "Develop"** Branch
-4. **We will review and merge** it to main branch
+4. **We will review and merge** it to develop branch first and than main branch
 
 ---
 
