@@ -1,144 +1,324 @@
-Flipkart Escrow
+# FlipkartEscrow
 
-Contract Name
-FlipkartEscrow
+---
 
-Overview
-FlipkartEscrow is a minimal smart contract designed for secure order transactions between buyers and sellers. It holds buyer funds in escrow and only releases them to the seller upon buyer's confirmation of delivery. The contract ensures a fair and trustless process similar to platforms like Flipkart.
+### Contract Name  
+**FlipkartEscrow**
 
-They are designed to be deployed and tested in the QRemix IDE using the JavaScript VM or a testnet like Quranium testnet, Sepolia etc.
+---
 
-Prerequisites
-To deploy and test the contract, you need:
+### Overview
 
-MetaMask or QSafe: Browser extension for testnet deployments (optional).
+The **FlipkartEscrow** smart contract is a secure escrow system designed for e-commerce transactions. This contract acts as a trusted intermediary that holds funds in escrow until the buyer confirms delivery, ensuring both buyer and seller protection in online transactions.
 
-Test ETH or QRN: Required for testnet deployments.
+The system supports order placement with fund escrow, shipping confirmation, delivery verification, and order cancellation with automatic refunds. Built with comprehensive status tracking and event logging for complete transaction transparency.
 
-QRemix IDE: Access at qremix.org.
+Perfect for e-commerce platforms, marketplace applications, peer-to-peer trading systems, or educational blockchain projects demonstrating secure payment workflows.
 
-Basic Solidity Knowledge: Understanding of smart contract deployment, payable functions, and enum states.
+---
 
-Contract Details
-Functions
-placeOrder(address payable seller)
-Purpose: Places an order by depositing ETH into escrow.
+### Prerequisites
 
-Parameters:
+- MetaMask or compatible Web3 wallet
+- ETH or testnet tokens (for transactions and gas fees)
+- Remix IDE or similar development environment
+- Basic understanding of smart contract interactions
 
-seller: Address of the seller.
+---
 
-Payable: Yes
+### Contract Functions
 
-Returns: Order ID (uint256)
+#### placeOrder
 
-markAsShipped(uint256 orderId)
-Purpose: Seller marks the order as shipped.
+```solidity
+placeOrder(address payable seller) external payable returns (uint256)
+```
+- **Purpose:** Places a new order with funds held in escrow
+- **Access:** Any address (buyer)
+- **Parameters:** `seller` - address of the seller
+- **Payment:** Must send ETH with the transaction
+- **Returns:** Order ID for tracking
+- **Requirements:** Payment must be greater than zero, valid seller address
 
-Parameters:
+#### markAsShipped
 
-orderId: ID of the order to update.
+```solidity
+markAsShipped(uint256 _id) external
+```
+- **Purpose:** Seller confirms order has been shipped
+- **Access:** Seller only
+- **Parameters:** `_id` - order ID to update
+- **Requirements:** Only seller can call, order must be in "Placed" status
 
-Access: Only the seller of that order.
+#### confirmDelivery
 
-confirmDelivery(uint256 orderId)
-Purpose: Buyer confirms delivery, releasing payment to the seller.
+```solidity
+confirmDelivery(uint256 _id) external
+```
+- **Purpose:** Buyer confirms delivery, releases funds to seller
+- **Access:** Buyer only
+- **Parameters:** `_id` - order ID to confirm
+- **Requirements:** Only buyer can call, order must be in "Shipped" status
 
-Parameters:
+#### cancelOrder
 
-orderId: ID of the order to confirm.
+```solidity
+cancelOrder(uint256 _id) external
+```
+- **Purpose:** Buyer cancels order and receives refund
+- **Access:** Buyer only
+- **Parameters:** `_id` - order ID to cancel
+- **Requirements:** Only buyer can call, order must be in "Placed" status (before shipping)
 
-Access: Only the buyer of that order.
+#### getOrderStatus
 
-cancelOrder(uint256 orderId)
-Purpose: Buyer cancels the order before it is shipped and receives a refund.
+```solidity
+getOrderStatus(uint256 _id) external view returns (Status)
+```
+- **Purpose:** Returns current status of an order
+- **Access:** Public read-only
+- **Parameters:** `_id` - order ID to check
+- **Returns:** Current order status (Placed, Shipped, Delivered, Cancelled)
 
-Parameters:
+---
 
-orderId: ID of the order to cancel.
+### Access Control
 
-Access: Only the buyer of that order.
+This contract implements transaction-based access control:
 
-getOrderStatus(uint256 orderId)
-Purpose: Retrieves the current status of the order.
+- **Buyer Functions**: `placeOrder`, `confirmDelivery`, `cancelOrder`
+- **Seller Functions**: `markAsShipped`
+- **Public Functions**: `getOrderStatus`
 
-Parameters:
+> Access is determined by the buyer and seller addresses stored in each order.
 
-orderId: ID of the order.
+---
 
-Returns: Enum Status: Placed, Shipped, Delivered, or Cancelled
+### Contract State
 
-Events
-OrderPlaced(uint256 indexed id, address buyer, address seller, uint256 amount)
+#### Constants
+- `orderId`: Global counter for order IDs
 
-OrderShipped(uint256 indexed id)
+#### Data Structures
+```solidity
+enum Status { Placed, Shipped, Delivered, Cancelled }
 
-OrderDelivered(uint256 indexed id)
+struct Order {
+    address payable buyer;    // Order buyer address
+    address payable seller;   // Order seller address
+    uint256 amount;          // Escrowed amount
+    Status status;           // Current order status
+}
+```
 
-OrderCancelled(uint256 indexed id)
+#### Order Status Flow
+1. **Placed**: Order created, funds in escrow
+2. **Shipped**: Seller confirms shipment
+3. **Delivered**: Buyer confirms delivery, funds released
+4. **Cancelled**: Order cancelled, funds refunded
 
-Deployment and Testing in QRemix IDE
-Step 1: Setup
-Open qremix.org
+---
 
-Create folder structure: FlipkartEscrow/
+### Events
 
-Create FlipkartEscrow.sol in the folder
+- `OrderPlaced`: Emitted when a new order is created
+- `OrderShipped`: Emitted when seller marks order as shipped
+- `OrderDelivered`: Emitted when buyer confirms delivery
+- `OrderCancelled`: Emitted when order is cancelled
 
-Paste the contract code
+---
 
-Step 2: Compilation
-Go to "Solidity Compiler" tab
+### Deployment & Testing
 
-Select compiler version 0.8.20 or higher
+#### Step 1: Setup
+- Open [remix.ethereum.org](https://remix.ethereum.org)
+- Create folder: `FlipkartEscrow/`
+- Add `FlipkartEscrow.sol` and paste the contract code
 
-Compile FlipkartEscrow.sol
+#### Step 2: Compile
+- Go to Solidity Compiler
+- Select compiler version `^0.8.20`
+- Compile the contract
 
-Step 3: Deployment
-For Quranium Testnet:
-Go to "Deploy & Run Transactions" tab
+#### Step 3: Deploy
 
-Select "Injected Provider - MetaMask" as environment
+##### Ethereum Testnet (Sepolia/Goerli)
+- Go to **Deploy & Run Transactions**
+- Choose **Injected Provider - MetaMask**
+- Connect to testnet
+- Deploy contract (no constructor arguments)
 
-Ensure MetaMask/QSafe is connected to Quranium Testnet
+##### Local Testing (JavaScript VM)
+- Choose **JavaScript VM**
+- Deploy contract directly
 
-Deploy the FlipkartEscrow contract
+#### Step 4: Testing Workflow
 
-For JavaScript VM (Local Testing):
-Select "JavaScript VM" as environment
+1. **As Buyer:**
+   ```solidity
+   // Place order with 0.1 ETH
+   placeOrder(sellerAddress, {value: 100000000000000000});
+   
+   // Check order status
+   getOrderStatus(1); // Returns Status.Placed
+   ```
 
-Deploy FlipkartEscrow contract
+2. **As Seller:**
+   ```solidity
+   // Mark order as shipped
+   markAsShipped(1);
+   
+   // Verify status change
+   getOrderStatus(1); // Returns Status.Shipped
+   ```
 
-Step 4: Testing
-Test Order Flow:
-From a buyer account, call placeOrder with a seller address and ETH
+3. **As Buyer (Delivery Confirmation):**
+   ```solidity
+   // Confirm delivery (releases funds to seller)
+   confirmDelivery(1);
+   
+   // Check final status
+   getOrderStatus(1); // Returns Status.Delivered
+   ```
 
-From the seller account, call markAsShipped using the order ID
+4. **As Buyer (Cancellation):**
+   ```solidity
+   // Cancel order (only before shipping)
+   cancelOrder(1);
+   
+   // Check status
+   getOrderStatus(1); // Returns Status.Cancelled
+   ```
 
-From the buyer account, call confirmDelivery using the same order ID
+---
 
-Verify seller received ETH and order status is Delivered
+### Example Usage
 
-Test Cancel Flow:
-Place a new order
+```solidity
+// Deploy contract
+FlipkartEscrow escrow = new FlipkartEscrow();
 
-From buyer account, call cancelOrder before shipping
+// Buyer places order for 0.5 ETH
+uint256 orderID = escrow.placeOrder{value: 0.5 ether}(sellerAddress);
 
-Verify refund is returned and status is Cancelled
+// Seller ships the order
+escrow.markAsShipped(orderID);
 
-Test Restrictions:
-Only buyer can cancel or confirm delivery
+// Buyer confirms delivery
+escrow.confirmDelivery(orderID);
 
-Only seller can mark order as shipped
+// Check final status
+Status finalStatus = escrow.getOrderStatus(orderID);
+// finalStatus == Status.Delivered
+```
 
-Orders cannot be cancelled after shipping
+---
 
-Orders cannot be delivered without shipping
+### Transaction Flow
 
-License
-This project is licensed under the MIT License. See the SPDX-License-Identifier: MIT in the contract file.
+#### Successful Transaction
+1. **Buyer** places order with payment → Funds locked in escrow
+2. **Seller** marks as shipped → Status updated to "Shipped"
+3. **Buyer** confirms delivery → Funds released to seller
+4. **Final Status**: Delivered
 
-Support
-For issues or feature requests:
+#### Cancelled Transaction
+1. **Buyer** places order with payment → Funds locked in escrow
+2. **Buyer** cancels order (before shipping) → Refund issued
+3. **Final Status**: Cancelled
 
-Check the QRemix IDE documentation: https://docs.qremix.org
+---
+
+### Use Cases
+
+#### E-commerce Platforms
+- **Marketplace Protection**: Secure transactions between unknown parties
+- **Buyer Protection**: Funds held until delivery confirmation
+- **Seller Protection**: Payment guaranteed upon delivery
+- **Dispute Resolution**: Clear status tracking for mediation
+
+#### Business Applications
+- **Freelance Services**: Escrow for service delivery
+- **Digital Products**: Secure payment for downloads
+- **Physical Goods**: Traditional e-commerce escrow
+- **Subscription Services**: Recurring payment protection
+
+---
+
+### Security Considerations
+
+- **Fund Security**: Funds locked in contract until delivery or cancellation
+- **Access Control**: Only relevant parties can update order status
+- **Status Validation**: Strict order status progression
+- **Refund Protection**: Automatic refunds on cancellation
+- **No Admin Control**: Decentralized system without central authority
+
+---
+
+### Integration Examples
+
+#### Web3 Frontend Integration
+```javascript
+// Place order
+const tx = await contract.placeOrder(sellerAddress, {
+    value: ethers.utils.parseEther("0.1")
+});
+
+// Listen for order events
+contract.on("OrderPlaced", (id, buyer, seller, amount) => {
+    console.log(`Order ${id} placed: ${amount} ETH`);
+});
+
+// Check order status
+const status = await contract.getOrderStatus(orderId);
+const statusNames = ["Placed", "Shipped", "Delivered", "Cancelled"];
+console.log(`Order status: ${statusNames[status]}`);
+```
+
+#### Event Monitoring
+```javascript
+// Monitor all order events
+contract.on("OrderShipped", (id) => {
+    console.log(`Order ${id} has been shipped`);
+});
+
+contract.on("OrderDelivered", (id) => {
+    console.log(`Order ${id} delivered, payment released`);
+});
+
+contract.on("OrderCancelled", (id) => {
+    console.log(`Order ${id} cancelled, refund issued`);
+});
+```
+
+---
+
+### Error Handling
+
+Common error scenarios and solutions:
+
+- **"Payment must be greater than zero"**: Send ETH with placeOrder transaction
+- **"Only seller can mark shipped"**: Ensure seller address is calling markAsShipped
+- **"Only buyer can confirm delivery"**: Ensure buyer address is calling confirmDelivery
+- **"Order must be shipped first"**: Cannot confirm delivery before shipping
+- **"Cannot cancel after shipping"**: Orders can only be cancelled before shipping
+
+---
+
+### License
+
+This project is licensed under the MIT License.  
+See `SPDX-License-Identifier: MIT` in the Solidity file.
+
+---
+
+### Support
+
+For help, improvements, or bug reports:
+- Remix IDE Docs: https://remix-ide.readthedocs.io
+- Solidity Documentation: https://docs.soliditylang.org
+- Ethereum Development: https://ethereum.org/en/developers/
+
+---
+
+**Built for Secure E-commerce Transactions** 🛒
