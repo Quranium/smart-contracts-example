@@ -17,7 +17,9 @@ contract SimpleWallet {
     }
 
     // Payable function to allow sending ETH to the contract with a message
-    function sendMessage(string calldata message) public payable returns (string memory) {
+    function sendMessage(
+        string calldata message
+    ) public payable returns (string memory) {
         require(msg.value > 0, "Send some ETH with the message");
         return message;
     }
