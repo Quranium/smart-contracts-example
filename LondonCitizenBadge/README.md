@@ -1,278 +1,99 @@
 # LondonCitizenBadge
 
----
+## Overview
 
-### Contract Name  
-**LondonCitizenBadge**
+The **LondonCitizenBadge** contract is a digital identity and verification system for issuing non-transferable citizen badges to residents, workers, or visitors in London boroughs.  
+Each badge includes metadata such as name, borough, and role. Admins can issue and revoke badges, while users can check badge status or retrieve badge information.
 
----
+This contract is lightweight, easy to deploy, and useful for government-backed identity programs, smart city projects, or gated digital services.
 
-### Overview
+*They are designed to be deployed and tested in the **QRemix IDE** using the JavaScript VM or a testnet like Quranium testnet, Sepolia etc.*
 
-The **LondonCitizenBadge** smart contract is a blockchain-based digital identity system for London citizens. This contract enables the issuance and management of digital badges that verify citizen identity, borough affiliation, and role within the London ecosystem.
+## Prerequisites
 
-The system supports badge issuance with citizen details (name, borough, role), badge revocation for administrative purposes, and verification of active badge status. Built with secure access controls and comprehensive event logging for transparency.
+To deploy and test the contracts, you need:
 
-Perfect for smart city initiatives, digital identity verification, civic engagement platforms, or educational blockchain projects demonstrating identity management systems.
+- **MetaMask or QSafe**: Browser extension for testnet deployments (optional).
+- **Test ETH or QRN**: Required for testnet deployments (e.g., from a Sepolia faucet like [sepoliafaucet.com](https://sepoliafaucet.com/), Quranium [faucet.quranium.org](https://faucet.quranium.org/)).
+- **QRemix IDE**: Access at [https://www.qremix.org/](https://www.qremix.org/)
+- **Basic Solidity Knowledge**: Understanding of smart contract roles, modifiers, structs, and mappings.
 
----
+## Contract Details
 
-### Prerequisites
+### Structs
 
-- MetaMask or compatible Web3 wallet
-- ETH or testnet tokens (for gas fees)
-- Remix IDE or similar development environment
-- Basic understanding of smart contract interactions
+- `Badge`:
+  - `name`: Citizen's name.
+  - `borough`: e.g., Camden, Hackney, Westminster.
+  - `role`: e.g., Citizen, Resident, Worker.
+  - `issuedAt`: Timestamp of issuance.
+  - `isActive`: Indicates whether the badge is currently active.
 
----
+### State Variables
 
-### Contract Functions
+- `admin`: Address with permission to issue/revoke badges.
+- `totalBadges`: Counter to track the total number of badges issued.
+- `badges`: Mapping from user address to their badge data.
 
-#### issueBadge
+### Functions
 
-```solidity
-issueBadge(address user, string memory name, string memory borough, string memory role) external onlyAdmin hasNoBadge(user)
-```
-- **Purpose:** Issues a new citizen badge to a user
-- **Access:** Admin only
-- **Parameters:** 
-  - `user` - recipient address
-  - `name` - citizen's full name
-  - `borough` - London borough (e.g., Camden, Hackney, Westminster)
-  - `role` - citizen role (e.g., Citizen, Resident, Worker)
-- **Requirement:** User must not already have a badge
+- `constructor()`:  
+  Sets the deployer as the admin.
 
-#### revokeBadge
+- `issueBadge(address user, string name, string borough, string role)`:  
+  Admin-only function to issue a badge to a user. Prevents reissuing to the same address.
 
-```solidity
-revokeBadge(address user) external onlyAdmin hasBadge(user)
-```
-- **Purpose:** Revokes an existing citizen badge
-- **Access:** Admin only
-- **Parameters:** `user` - address of the badge holder
-- **Requirement:** User must have an existing badge
+- `revokeBadge(address user)`:  
+  Admin-only function to deactivate a badge previously issued.
 
-#### hasActiveBadge
+- `hasActiveBadge(address user)`:  
+  View function to check whether a user's badge is still active.
 
-```solidity
-hasActiveBadge(address user) external view returns (bool)
-```
-- **Purpose:** Checks if a user has an active badge
-- **Access:** Public read-only
-- **Parameters:** `user` - address to check
-- **Returns:** Boolean indicating active badge status
+- `getBadgeInfo(address user)`:  
+  Returns full badge details for a given address.
 
-#### getBadgeInfo
+### Modifiers
 
-```solidity
-getBadgeInfo(address user) external view returns (Badge memory)
-```
-- **Purpose:** Returns complete badge information for a user
-- **Access:** Public read-only
-- **Parameters:** `user` - address of the badge holder
-- **Returns:** Badge struct containing all badge details
-
----
-
-### Access Control
-
-This contract implements role-based access control:
-
-- **Admin Functions**: `issueBadge`, `revokeBadge`
-- **Public Functions**: `hasActiveBadge`, `getBadgeInfo`
-
-> The admin is set to the contract deployer and cannot be changed.
-
----
-
-### Contract State
-
-#### Constants
-- `admin`: Contract administrator address
-- `totalBadges`: Total number of badges issued
-
-#### Data Structures
-```solidity
-struct Badge {
-    string name;        // Citizen's full name
-    string borough;     // London borough
-    string role;        // Citizen role
-    uint256 issuedAt;   // Creation timestamp
-    bool isActive;      // Badge status
-}
-```
-
-#### London Boroughs
-The contract supports all 32 London boroughs including:
-- **Inner London**: Camden, Hackney, Hammersmith and Fulham, Islington, Kensington and Chelsea, Lambeth, Lewisham, Southwark, Tower Hamlets, Wandsworth, Westminster
-- **Outer London**: Barking and Dagenham, Barnet, Bexley, Brent, Bromley, Croydon, Ealing, Enfield, Greenwich, Harrow, Havering, Hillingdon, Hounslow, Kingston upon Thames, Merton, Newham, Redbridge, Richmond upon Thames, Sutton, Waltham Forest
-
-#### Role Types
-Common roles include:
-- **Citizen**: Full London citizen
-- **Resident**: London resident
-- **Worker**: London worker/employee
-- **Student**: London student
-- **Visitor**: Temporary visitor
-
----
+- `onlyAdmin`: Restricts functions to the admin address.
+- `hasNoBadge`: Ensures a badge hasn't already been issued to the address.
+- `hasBadge`: Ensures a badge exists for the address.
 
 ### Events
 
-- `BadgeIssued`: Emitted when a new badge is created
-- `BadgeRevoked`: Emitted when a badge is revoked
+- `BadgeIssued`: Emitted when a badge is successfully issued.
+- `BadgeRevoked`: Emitted when a badge is revoked by the admin.
 
----
+## Deployment and Testing in QRemix IDE (optional)
 
-### Deployment & Testing
+1. Open [QRemix IDE](https://www.qremix.org/).
+2. Paste the smart contract into a new file (e.g., `LondonCitizenBadge.sol`).
+3. Compile using Solidity version `0.8.20`.
+4. Go to **Deploy & Run Transactions**.
+5. Choose the environment (e.g., **JavaScript VM** or **Injected Provider**).
+6. Deploy the contract.
 
-#### Step 1: Setup
-- Open [remix.ethereum.org](https://remix.ethereum.org)
-- Create folder: `LondonCitizenBadge/`
-- Add `LondonCitizenBadge.sol` and paste the contract code
+### Example Flow
 
-#### Step 2: Compile
-- Go to Solidity Compiler
-- Select compiler version `^0.8.20`
-- Compile the contract
+1. **Issue a Badge**  
+   As admin, call `issueBadge(user, name, borough, role)`.
 
-#### Step 3: Deploy
+2. **Check Active Badge**  
+   Use `hasActiveBadge(user)` to check if a badge is valid.
 
-##### Ethereum Testnet (Sepolia/Goerli)
-- Go to **Deploy & Run Transactions**
-- Choose **Injected Provider - MetaMask**
-- Connect to testnet
-- Deploy contract (no constructor arguments)
+3. **Revoke a Badge**  
+   As admin, call `revokeBadge(user)` to deactivate a badge.
 
-##### Local Testing (JavaScript VM)
-- Choose **JavaScript VM**
-- Deploy contract directly
+4. **View Badge Info**  
+   Call `getBadgeInfo(user)` to see full metadata.
 
-#### Step 4: Testing Workflow
-
-1. **As Admin:**
-   ```solidity
-   // Issue a badge
-   issueBadge(userAddress, "John Smith", "Camden", "Citizen");
-   
-   // Check total badges issued
-   totalBadges(); // Returns current count
-   ```
-
-2. **As Anyone:**
-   ```solidity
-   // Check if user has active badge
-   hasActiveBadge(userAddress); // Returns true/false
-   
-   // Get complete badge information
-   getBadgeInfo(userAddress);
-   ```
-
-3. **Admin Controls:**
-   ```solidity
-   // Revoke a badge
-   revokeBadge(userAddress);
-   
-   // Verify badge is inactive
-   hasActiveBadge(userAddress); // Returns false
-   ```
-
----
-
-### Example Usage
-
-```solidity
-// Deploy contract (admin = deployer)
-LondonCitizenBadge badgeSystem = new LondonCitizenBadge();
-
-// Issue badge to London citizen
-badgeSystem.issueBadge(
-    0x123...,
-    "Alice Johnson",
-    "Westminster",
-    "Resident"
-);
-
-// Verify badge status
-bool isActive = badgeSystem.hasActiveBadge(0x123...);
-
-// Get badge details
-Badge memory badge = badgeSystem.getBadgeInfo(0x123...);
-console.log("Name:", badge.name);
-console.log("Borough:", badge.borough);
-console.log("Role:", badge.role);
-```
-
----
-
-### Use Cases
-
-#### Smart City Applications
-- **Public Services**: Access to borough-specific services
-- **Voting Systems**: Verify citizenship for local elections
-- **Transport**: London resident discounts and access
-- **Healthcare**: NHS service verification
-
-#### Civic Engagement
-- **Community Forums**: Verified citizen discussions
-- **Local Events**: Borough-specific event access
-- **Governance**: Citizen participation in local decisions
-- **Emergency Services**: Rapid identity verification
-
-#### Business Integration
-- **Local Businesses**: Resident discounts and offers
-- **Employment**: Work authorization verification
-- **Housing**: Resident status for housing applications
-- **Education**: Student verification for local schools
-
----
-
-### Security Considerations
-
-- **Single Badge Limitation**: Each address can only have one badge
-- **Admin Controls**: Only admin can issue/revoke badges
-- **Immutable Records**: Badge issuance timestamp is permanent
-- **Status Management**: Badges can be deactivated but not deleted
-- **Data Privacy**: Personal information stored on-chain is public
-
----
-
-### Integration Examples
-
-#### Web3 Frontend Integration
-```javascript
-// Check if user has active badge
-const hasActiveBadge = await contract.hasActiveBadge(userAddress);
-
-// Get badge information
-const badge = await contract.getBadgeInfo(userAddress);
-if (badge.isActive) {
-    console.log(`Welcome ${badge.name} from ${badge.borough}!`);
-}
-```
-
-#### Event Listening
-```javascript
-// Listen for new badge issuances
-contract.on("BadgeIssued", (to, name, borough, role) => {
-    console.log(`New badge issued to ${name} in ${borough} as ${role}`);
-});
-```
-
----
-
-### License
+## License
 
 This project is licensed under the MIT License.  
-See `SPDX-License-Identifier: MIT` in the Solidity file.
+See the `SPDX-License-Identifier: MIT` in the contract file.
 
----
+## Support
 
-### Support
+For issues or feature requests:
 
-For help, improvements, or bug reports:
-- Remix IDE Docs: https://remix-ide.readthedocs.io
-- Solidity Documentation: https://docs.soliditylang.org
-- London Borough Information: https://www.london.gov.uk
-
-
+- Check the QRemix IDE documentation: [https://docs.qremix.org](https://docs.qremix.org)
+- Consult OpenZeppelin’s documentation: [https://docs.openzeppelin.com](https://docs.openzeppelin.com)
