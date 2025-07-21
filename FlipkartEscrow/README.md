@@ -1,144 +1,102 @@
-Flipkart Escrow
+# FlipkartEscrow
 
-Contract Name
-FlipkartEscrow
+## Overview
 
-Overview
-FlipkartEscrow is a minimal smart contract designed for secure order transactions between buyers and sellers. It holds buyer funds in escrow and only releases them to the seller upon buyer's confirmation of delivery. The contract ensures a fair and trustless process similar to platforms like Flipkart.
+The **FlipkartEscrow** contract enables secure and trustless e-commerce transactions between buyers and sellers.  
+Funds are held in escrow upon order placement and are only released to the seller upon buyer confirmation of delivery.  
+The contract supports order lifecycle stages: **Placed**, **Shipped**, **Delivered**, and **Cancelled**.
 
-They are designed to be deployed and tested in the QRemix IDE using the JavaScript VM or a testnet like Quranium testnet, Sepolia etc.
+This implementation provides a lightweight and secure approach to managing disputes and payment protection on-chain.
 
-Prerequisites
-To deploy and test the contract, you need:
+*They are designed to be deployed and tested in the **QRemix IDE** using the JavaScript VM or a testnet like Quranium testnet, Sepolia etc.*
 
-MetaMask or QSafe: Browser extension for testnet deployments (optional).
+## Prerequisites
 
-Test ETH or QRN: Required for testnet deployments.
+To deploy and test the contracts, you need:
 
-QRemix IDE: Access at qremix.org.
+- **MetaMask or QSafe**: Browser extension for testnet deployments (optional).
+- **Test ETH or QRN**: Required for testnet deployments (e.g., from a Sepolia faucet like [sepoliafaucet.com](https://sepoliafaucet.com/), Quranium [faucet.quranium.org](https://faucet.quranium.org/)).
+- **QRemix IDE**: Access at [https://www.qremix.org/](https://www.qremix.org/)
+- **Basic Solidity Knowledge**: Understanding of payable functions, mappings, enums, and smart contract security.
 
-Basic Solidity Knowledge: Understanding of smart contract deployment, payable functions, and enum states.
+## Contract Details
 
-Contract Details
-Functions
-placeOrder(address payable seller)
-Purpose: Places an order by depositing ETH into escrow.
+### Enums
 
-Parameters:
+- `enum Status { Placed, Shipped, Delivered, Cancelled }`:  
+  Represents the various stages in the order lifecycle.
 
-seller: Address of the seller.
+### Structs
 
-Payable: Yes
+- `Order`: Contains:
+  - `buyer`: Address of the buyer.
+  - `seller`: Address of the seller.
+  - `amount`: Payment value in escrow.
+  - `status`: Current order status.
 
-Returns: Order ID (uint256)
+### State Variables
 
-markAsShipped(uint256 orderId)
-Purpose: Seller marks the order as shipped.
+- `orderId`: Counter to track order IDs.
+- `orders`: Mapping of `orderId` to `Order` struct.
 
-Parameters:
+### Functions
 
-orderId: ID of the order to update.
+- `placeOrder(address seller) payable returns (uint256)`:  
+  Buyer places an order by sending payment. A new `Order` is created with status `Placed`.
 
-Access: Only the seller of that order.
+- `markAsShipped(uint256 id)`:  
+  Seller changes the order status from `Placed` to `Shipped`.
 
-confirmDelivery(uint256 orderId)
-Purpose: Buyer confirms delivery, releasing payment to the seller.
+- `confirmDelivery(uint256 id)`:  
+  Buyer confirms delivery. Funds are released to the seller and status changes to `Delivered`.
 
-Parameters:
+- `cancelOrder(uint256 id)`:  
+  Buyer can cancel an order only if it's still in `Placed` status. Refunds the buyer and sets status to `Cancelled`.
 
-orderId: ID of the order to confirm.
+- `getOrderStatus(uint256 id)`:  
+  Public view function to return the current order status.
 
-Access: Only the buyer of that order.
+### Events
 
-cancelOrder(uint256 orderId)
-Purpose: Buyer cancels the order before it is shipped and receives a refund.
+- `OrderPlaced`: Emitted when a new order is placed.
+- `OrderShipped`: Emitted when the seller marks the order as shipped.
+- `OrderDelivered`: Emitted when the buyer confirms delivery.
+- `OrderCancelled`: Emitted when an order is cancelled by the buyer.
 
-Parameters:
+## Deployment and Testing in QRemix IDE (optional)
 
-orderId: ID of the order to cancel.
+1. Open [QRemix IDE](https://www.qremix.org/).
+2. Paste the smart contract into a new file (e.g., `FlipkartEscrow.sol`).
+3. Compile with Solidity version `0.8.20`.
+4. Navigate to the **Deploy & Run Transactions** tab.
+5. Choose environment: **JavaScript VM**, **Injected Provider**, or **Quranium Testnet**.
+6. Click **Deploy**.
 
-Access: Only the buyer of that order.
+### Example Usage Flow
 
-getOrderStatus(uint256 orderId)
-Purpose: Retrieves the current status of the order.
+1. **Place an Order**
+   - Buyer enters ETH value and seller address, then clicks `placeOrder(seller)`.
 
-Parameters:
+2. **Mark as Shipped**
+   - Seller (same account as passed to `placeOrder`) calls `markAsShipped(orderId)`.
 
-orderId: ID of the order.
+3. **Confirm Delivery**
+   - Buyer confirms by calling `confirmDelivery(orderId)`. Funds are released.
 
-Returns: Enum Status: Placed, Shipped, Delivered, or Cancelled
+4. **Cancel Order**
+   - Buyer cancels the order before it's shipped using `cancelOrder(orderId)`.
 
-Events
-OrderPlaced(uint256 indexed id, address buyer, address seller, uint256 amount)
+5. **Check Status**
+   - Anyone can call `getOrderStatus(orderId)` to view the current status.
 
-OrderShipped(uint256 indexed id)
+## License
 
-OrderDelivered(uint256 indexed id)
+This project is licensed under the MIT License.  
+See the `SPDX-License-Identifier: MIT` in the contract file.
 
-OrderCancelled(uint256 indexed id)
+## Support
 
-Deployment and Testing in QRemix IDE
-Step 1: Setup
-Open qremix.org
-
-Create folder structure: FlipkartEscrow/
-
-Create FlipkartEscrow.sol in the folder
-
-Paste the contract code
-
-Step 2: Compilation
-Go to "Solidity Compiler" tab
-
-Select compiler version 0.8.20 or higher
-
-Compile FlipkartEscrow.sol
-
-Step 3: Deployment
-For Quranium Testnet:
-Go to "Deploy & Run Transactions" tab
-
-Select "Injected Provider - MetaMask" as environment
-
-Ensure MetaMask/QSafe is connected to Quranium Testnet
-
-Deploy the FlipkartEscrow contract
-
-For JavaScript VM (Local Testing):
-Select "JavaScript VM" as environment
-
-Deploy FlipkartEscrow contract
-
-Step 4: Testing
-Test Order Flow:
-From a buyer account, call placeOrder with a seller address and ETH
-
-From the seller account, call markAsShipped using the order ID
-
-From the buyer account, call confirmDelivery using the same order ID
-
-Verify seller received ETH and order status is Delivered
-
-Test Cancel Flow:
-Place a new order
-
-From buyer account, call cancelOrder before shipping
-
-Verify refund is returned and status is Cancelled
-
-Test Restrictions:
-Only buyer can cancel or confirm delivery
-
-Only seller can mark order as shipped
-
-Orders cannot be cancelled after shipping
-
-Orders cannot be delivered without shipping
-
-License
-This project is licensed under the MIT License. See the SPDX-License-Identifier: MIT in the contract file.
-
-Support
 For issues or feature requests:
 
-Check the QRemix IDE documentation: https://docs.qremix.org
+- Check the QRemix IDE documentation: [https://docs.qremix.org](https://docs.qremix.org)
+- Consult OpenZeppelin’s documentation: [https://docs.openzeppelin.com](https://docs.openzeppelin.com)

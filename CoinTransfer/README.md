@@ -1,85 +1,68 @@
-# SimpleCoinTransfer Contract
-
-## Contract Name
-SimpleCoinTransfer
+# SimpleCoinTransfer
 
 ## Overview
-SimpleCoinTransfer is a minimal smart contract that allows users to send Ether to other addresses while maintaining internal balance tracking. This contract demonstrates basic Ether handling, balance management, and secure transfer mechanisms. The contract follows best practices and utilizes secure patterns similar to those found in **OpenZeppelin** libraries for safe Ether transfers.
+
+The **SimpleCoinTransfer** smart contract enables users to deposit Ether into the contract and transfer it to other addresses using an internal balance mapping.  
+It maintains account balances off-chain within the contract, allowing secure and traceable Ether transfers between users.
+
+This contract uses **Solidity v0.8.20** and follows basic best practices. No external libraries are used, but it is designed to be lightweight and easy to test.
+
 *They are designed to be deployed and tested in the **QRemix IDE** using the JavaScript VM or a testnet like Quranium testnet, Sepolia etc.*
 
 ## Prerequisites
 
 To deploy and test the contracts, you need:
-* **MetaMask or QSafe**: Browser extension for testnet deployments (optional).
-* **Test ETH or QRN**: Required for testnet deployments (e.g., from a Sepolia faucet like sepoliafaucet.com, Quranium faucet.quranium.org).
-* **QRemix IDE**: Access at qremix.org.
 
-* **Basic Solidity Knowledge**: Understanding of ERC20 tokens, smart contract deployment, and Remix IDE.
+- **MetaMask or QSafe**: Browser extension for testnet deployments (optional).
+- **Test ETH or QRN**: Required for testnet deployments (e.g., from a Sepolia faucet like [sepoliafaucet.com](https://sepoliafaucet.com/), Quranium [faucet.quranium.org](https://faucet.quranium.org/)).
+- **QRemix IDE**: Access at [https://www.qremix.org/](https://www.qremix.org/)
+- **Basic Solidity Knowledge**: Understanding of smart contract deployment and Remix IDE.
 
 ## Contract Details
 
-### State Variables
-- **internalBalance**: `mapping(address => uint256)` - Tracks internal balance of each address
+### Functions
 
-### Main Functions
+- `receive() external payable`:  
+  Accepts incoming Ether transfers and updates the sender’s internal balance. Emits a `CoinReceived` event.
 
-#### Constructor
+- `sendCoin(address payable to, uint256 amount) external`:  
+  Sends Ether to another address from the sender’s internal balance.  
+  - Reverts if the sender has insufficient balance.  
+  - Emits `CoinSent` event on success.
 
-- **Purpose**: No explicit constructor - uses default constructor
-- **Parameters**: None
-- **Initialization**: Contract starts with empty balances
-#### Receive Function
+- `getContractBalance() external view returns (uint256)`:  
+  Returns the total Ether held by the contract.
 
-- **Function**: `receive() external payable`
-- **Purpose**: Accepts Ether deposits and updates sender's internal balance
-- **Parameters**: None (receives msg.value automatically)
-- **Access**: Anyone can send Ether to the contract
-- **Behavior**: Automatically adds sent Ether to sender's internal balance
-#### Public Functions
-##### sendCoin
-- **Function**: `sendCoin(address payable to, uint256 amount)`
-- **Purpose**: Send coins from sender to recipient if balance is sufficient
-- **Parameters**:
-  - `to`: The recipient address (must be payable)
-  - `amount`: Amount to send in wei
-- **Returns**: None
-- **Access**: Any address with sufficient internal balance
-- **Requirements**:
-  - Recipient address must not be zero address
-  - Sender must have sufficient internal balance
-- **Behavior**:
-  - Deducts amount from sender's internal balance
-  - Adds amount to recipient's internal balance
-  - Transfers actual Ether to recipient
-  - Emits CoinSent event
-#### View Functions
-##### getContractBalance
-- **Function**: `getContractBalance()`
-- **Purpose**: Returns the total Ether held by the contract
-- **Parameters**: None
-- **Returns**: `uint256` - Contract's total Ether balance in wei
-- **Access**: Public view function
-##### myBalance
-- **Function**: `myBalance()`
-- **Purpose**: Returns the caller's internal balance
-- **Parameters**: None
-- **Returns**: `uint256` - Caller's internal balance in wei
-- **Access**: Public view function
-##### internalBalance
-- **Function**: `internalBalance(address)`
-- **Purpose**: Returns the internal balance of any address
-- **Parameters**: `address` - The address to check
-- **Returns**: `uint256` - Internal balance of the specified address
-- **Access**: Public view function
+- `myBalance() external view returns (uint256)`:  
+  Returns the caller's internal balance maintained in the contract.
+
 ### Events
-- **CoinSent**: `CoinSent(address indexed from, address indexed to, uint256 amount)`
-  - **Purpose**: Emitted when coins are successfully sent between addresses
-  - **Parameters**:
-    - `from`: Sender address
-    - `to`: Recipient address
-    - `amount`: Amount transferred
-- **CoinReceived**: `CoinReceived(address indexed from, uint256 amount)`
-  - **Purpose**: Emitted when the contract receives Ether
-  - **Parameters**:
-    - `from`: Address that sent Ether
-    - `amount`: Amount received
+
+- `CoinReceived(address from, uint256 amount)`: Emitted when Ether is deposited.
+- `CoinSent(address from, address to, uint256 amount)`: Emitted when a transfer occurs.
+
+## Deployment and Testing in QRemix IDE (optional)
+
+1. Open [QRemix IDE](https://www.qremix.org/).
+2. Paste the smart contract code into a new Solidity file (e.g., `SimpleCoinTransfer.sol`).
+3. Click the **Compile** tab and compile the contract using Solidity `0.8.20`.
+4. Go to **Deploy & Run Transactions**.
+5. Choose **JavaScript VM** for local testing or **Injected Provider - MetaMask** for testnet deployment.
+6. Click **Deploy**.
+7. After deployment:
+   - Use the **value (in ETH)** field and click on the contract to send Ether (calls `receive()`).
+   - Use `sendCoin(to, amount)` to transfer to another address.
+   - Call `myBalance()` to check your internal balance.
+   - Call `getContractBalance()` to see the total Ether stored in the contract.
+
+## License
+
+This project is licensed under the MIT License.  
+See the `SPDX-License-Identifier: MIT` in the contract file.
+
+## Support
+
+For issues or feature requests:
+
+- Check the QRemix IDE documentation: [https://docs.qremix.org](https://docs.qremix.org)
+- Consult OpenZeppelin’s documentation: [https://docs.openzeppelin.com](https://docs.openzeppelin.com)
