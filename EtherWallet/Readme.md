@@ -13,15 +13,6 @@ The contract is designed to be deployed and tested using the **QRemix IDE**, eit
 
 ---
 
-## Prerequisites
-
-- QSafe (for testnet transactions)
-- QRN (Quranium testnet tokens)
-- Access to [QRemix IDE](https://qremix.org)
-- Basic knowledge of Solidity and smart contract workflow
-
----
-
 ## Contract Functions
 
 ### `deposit() external payable`
@@ -56,23 +47,50 @@ Ownership logic is implemented directly using `msg.sender`.
 
 ---
 
-## Contract Code
+## Deployment & Testing on QRemix
 
-```solidity
-// SPDX-License-Identifier: MIT
-pragma solidity ^0.8.0;
+### Step 1: Setup
+- Open [qremix.org](https://qremix.org)
+- Create folder: `Escrow/`
+- Add `Escrow.sol` and paste the contract code
 
-contract EtherWallet {
-    address public owner = msg.sender;
+### Step 2: Compile
+- Go to Solidity Compiler
+- Select version `0.8.20`
+- Compile the contract
 
-    function deposit() public payable {}
+### Step 3: Deploy
 
-    function withdraw(uint256 _amount) public {
-        require(msg.sender == owner, "Not owner");
-        payable(owner).transfer(_amount);
-    }
+#### Quranium Testnet
+- Go to Deploy & Run Transactions
+- Select Injected Provider - MetaMask
+- Connect to Quranium testnet
+- Deploy with ETH, passing the `_beneficiary`, `_arbiter`, and `_durationInSeconds` values
 
-    function getBalance() public view returns (uint256) {
-        return address(this).balance;
-    }
-}
+#### JavaScript VM
+- Choose JavaScript VM
+- Deploy locally with required constructor parameters and ETH
+
+### Step 4: Testing
+- Deploy contract with ETH, beneficiary, arbiter, and time duration
+- Call `markAsDelivered()` from the beneficiary address
+- Call `releaseToBeneficiary()` from the depositor address
+- Call `refundToDepositor()` from arbiter if delivery fails
+- Call `resolveDispute(true/false)` from arbiter to test dispute resolution
+- Use `claimAfterDeadline()` after 3 days past deadline (simulate using JavaScript VM)
+
+---
+
+## License
+
+This project is licensed under the MIT License.  
+See `SPDX-License-Identifier: MIT` in the Solidity file.
+
+---
+
+## Support
+
+For issues or feature requests, refer to:
+QRemix IDE Documentation : https://docs.qremix.org
+
+
