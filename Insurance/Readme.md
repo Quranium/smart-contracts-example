@@ -108,8 +108,8 @@ getBalance() external view returns (uint)
   - `_premium` → e.g., `1000000000000000000` (1 ETH in wei)
   - `_payoutAmount` → e.g., `5000000000000000000` (5 ETH in wei)
 
-#### JavaScript VM
-- Choose JavaScript VM
+#### QRemix VM
+- Choose QRemix VM
 - Deploy directly with constructor arguments (premium & payout).
 
 ### Step 4: Testing
