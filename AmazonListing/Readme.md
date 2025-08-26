@@ -172,8 +172,8 @@ getReviews(uint productId) → Review[]
 - Connect to Quranium testnet
 - Deploy (no constructor args)
 
-#### JavaScript VM
-- Choose JavaScript VM
+#### QRemix VM
+- Choose QRemix VM
 - Deploy directly with the default admin (deployer will be owner)
 
 ### Step 4: Testing Flow
